@@ -34,7 +34,7 @@ The Employee Management System is a comprehensive and user-friendly application 
 
 ## Live Preview
 
-To preview this project please visit https://hrms.shawon-khan.com/
+To preview this project please visit https://ems.shawon-khan.com/
 
 
 ## User Interface
@@ -65,7 +65,7 @@ To preview this project please visit https://hrms.shawon-khan.com/
 
 ## Technologies Used
 
-The following technologies have been used in the development of Employee Management System (HRMS):
+The following technologies have been used in the development of Employee Management System (EMS):
 
 - **[Laravel](https://laravel.com/)** : A popular PHP web application framework known for its elegant syntax and feature-rich ecosystem.
 - **[Laravel Blade](https://laravel.com/)** : The templating engine provided by Laravel for designing and rendering views.
@@ -186,7 +186,7 @@ Congratulations! Employee Management System should now be up and running at `htt
 
 
 ## AdminKit Admin Panel
-Our Employee Management System incorporates the AdminKit Admin Panel to streamline administrative tasks. AdminKit is a flexible and modern admin dashboard template built with Bootstrap and other front-end technologies. Its customizable components and UI elements enable efficient management of various HRMS functionalities.
+Our Employee Management System incorporates the AdminKit Admin Panel to streamline administrative tasks. AdminKit is a flexible and modern admin dashboard template built with Bootstrap and other front-end technologies. Its customizable components and UI elements enable efficient management of various EMS functionalities.
 
 Get it from here: **[AdminKit](https://adminkit.io/)**
 

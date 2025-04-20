@@ -20,22 +20,77 @@
         background-size: cover;
         background-position: fixed;
       }
+      .auth-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 100%;
+      }
+      .auth-card h2 {
+        color: #1a365d;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+      }
+      .auth-card p {
+        color: #4a5568;
+        margin-bottom: 1rem;
+      }
+      .auth-card .btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        text-align: center;
+        transition: all 0.2s;
+      }
+      .auth-card .btn-primary {
+        background-color: #3b82f6;
+        color: white;
+      }
+      .auth-card .btn-primary:hover {
+        background-color: #2563eb;
+      }
+      .auth-card .btn-secondary {
+        background-color: #e2e8f0;
+        color: #1a365d;
+      }
+      .auth-card .btn-secondary:hover {
+        background-color: #cbd5e0;
+      }
+      .cards-container {
+        margin-top: 8rem;
+      }
     </style>
   </head>
   <body class="antialiased">
     <div id="welcome" class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-cover bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-500 selection:text-white">
-      @if (Route::has('login'))
-        <div class="sm:fixed sm:top-0 sm:right-0 p-6 text-right z-10">
-          @auth
-            <a href="{{ url('/dashboard') }}" class="font-semibold text-blue-600 hover:text-blue-900 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Dashboard</a>
-          @else
-            <a href="{{ route('login') }}" class="font-semibold text-blue-600 hover:text-blue-900 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Log in</a>
-            @if (Route::has('register'))
-              <a href="{{ route('register') }}" class="ml-4 font-semibold text-blue-600 hover:text-blue-900 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Register</a>
-            @endif
-          @endauth
+      <div class="max-w-7xl mx-auto p-6 lg:p-8">
+        <div class="flex justify-center cards-container">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+            <!-- Login Card -->
+            <div class="auth-card">
+              <h2>Welcome Back</h2>
+              <p>Sign in to access your account and manage your tasks efficiently.</p>
+              <div class="mt-4">
+                <a href="{{ route('login') }}" class="btn btn-primary w-full">Login</a>
+              </div>
+            </div>
+
+            <!-- Register Card -->
+            <div class="auth-card">
+              <h2>New Here?</h2>
+              <p>Create an account to get started with our employee management system.</p>
+              <div class="mt-4">
+                <a href="{{ route('register') }}" class="btn btn-secondary w-full">Register</a>
+              </div>
+            </div>
+          </div>
         </div>
-      @endif
+      </div>
     </div>
   </body>
 </html>
