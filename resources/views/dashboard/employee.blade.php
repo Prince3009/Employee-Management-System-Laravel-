@@ -3,17 +3,22 @@
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-800">Employee Dashboard</h1>
-        <a href="{{ route('tasks.index') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-            </svg>
-            View All Tasks
-        </a>
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Employee Dashboard</h1>
+            <p class="text-gray-600 mt-2">Welcome back, {{ Auth::user()->name }}!</p>
+        </div>
+        <div class="flex space-x-4">
+            <a href="{{ route('tasks.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+                All Tasks
+            </a>
+        </div>
     </div>
 
-    <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <!-- Task Statistics -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex items-center">
                 <div class="p-3 rounded-full bg-blue-100 text-blue-600">
@@ -23,7 +28,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-gray-500">Total Tasks</p>
-                    <h3 class="text-2xl font-bold text-gray-800">{{ $assignedTasks->count() }}</h3>
+                    <h3 class="text-2xl font-bold text-gray-800">{{ $tasks->count() }}</h3>
                 </div>
             </div>
         </div>
@@ -36,28 +41,14 @@
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <p class="text-gray-500">Completed</p>
-                    <h3 class="text-2xl font-bold text-gray-800">{{ $completed }}</h3>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
-                <div class="ml-4">
-                    <p class="text-gray-500">Pending</p>
-                    <h3 class="text-2xl font-bold text-gray-800">{{ $pending }}</h3>
+                    <p class="text-gray-500">Completed Tasks</p>
+                    <h3 class="text-2xl font-bold text-gray-800">{{ $tasks->where('status', 'completed')->count() }}</h3>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Task List Section -->
+    <!-- Tasks Section -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-semibold text-gray-800">Your Tasks</h2>
@@ -68,25 +59,25 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Task</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach($assignedTasks as $task)
+                    @foreach($tasks->take(5) as $task)
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-medium text-gray-900">{{ $task->title }}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">{{ $task->due_date ? $task->due_date->format('M d, Y') : 'No due date' }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                 {{ $task->status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
                                 {{ ucfirst($task->status) }}
                             </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ $task->due_date->format('M d, Y') }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <a href="{{ route('tasks.show', $task->id) }}" class="text-blue-600 hover:text-blue-900">View</a>
@@ -100,30 +91,75 @@
 
     <!-- Notifications Section -->
     <div class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-6">Recent Notifications</h2>
-        @if(Auth::user()->unreadNotifications->count() > 0)
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-gray-800">Recent Updates & Comments</h2>
+            <div class="flex space-x-2">
+                <button onclick="markAllAsRead()" class="text-blue-600 hover:text-blue-800 text-sm">Mark all as read</button>
+            </div>
+        </div>
+        
+        @if($notifications->count() > 0)
             <div class="space-y-4">
-                @foreach(Auth::user()->unreadNotifications as $notification)
-                    <div class="flex items-start p-4 bg-blue-50 rounded-lg">
-                        <div class="flex-shrink-0">
-                            <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-gray-900">{{ $notification->data['message'] }}</p>
-                            <div class="mt-2 flex items-center space-x-4">
-                                <a href="{{ route('tasks.show', $notification->data['task_id']) }}" 
-                                   class="text-sm text-blue-600 hover:text-blue-800">View Task</a>
-                                <span class="text-xs text-gray-500">{{ $notification->created_at->diffForHumans() }}</span>
+                @foreach($notifications as $notification)
+                    @if($notification->type === 'App\Notifications\TaskStatusUpdated' || $notification->type === 'App\Notifications\TaskCommentAdded')
+                        <div class="flex items-start p-4 bg-blue-50 rounded-lg">
+                            <div class="flex-shrink-0">
+                                @if($notification->type === 'App\Notifications\TaskStatusUpdated')
+                                    <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                @else
+                                    <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                                    </svg>
+                                @endif
+                            </div>
+                            <div class="ml-3 flex-1">
+                                <p class="text-sm font-medium text-gray-900">
+                                    @if($notification->type === 'App\Notifications\TaskStatusUpdated')
+                                        {{ $notification->data['user_name'] }} updated the status of task "{{ $notification->data['task_title'] }}" to {{ $notification->data['new_status'] }}
+                                    @else
+                                        {{ $notification->data['user_name'] }} commented on task "{{ $notification->data['task_title'] }}"
+                                    @endif
+                                </p>
+                                <div class="mt-2 flex items-center space-x-4">
+                                    <a href="{{ route('tasks.show', $notification->data['task_id']) }}" 
+                                       class="text-sm text-blue-600 hover:text-blue-800">View Task</a>
+                                    <span class="text-xs text-gray-500">{{ $notification->created_at->diffForHumans() }}</span>
+                                </div>
+                                @if($notification->type === 'App\Notifications\TaskCommentAdded')
+                                    <div class="mt-2 text-sm text-gray-600 bg-white p-2 rounded border border-gray-200">
+                                        {{ $notification->data['comment_text'] }}
+                                    </div>
+                                @endif
                             </div>
                         </div>
-                    </div>
+                    @endif
                 @endforeach
             </div>
         @else
-            <p class="text-gray-500 text-center py-4">No new notifications</p>
+            <p class="text-gray-500 text-center py-4">No new updates or comments</p>
         @endif
     </div>
 </div>
+
+@push('scripts')
+<script>
+    function markAllAsRead() {
+        fetch('{{ route('notifications.markAllAsRead') }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            }
+        });
+    }
+</script>
+@endpush
 @endsection

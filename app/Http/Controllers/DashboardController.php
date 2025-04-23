@@ -12,23 +12,40 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
-
-        if ($user->isManager()) {
-            $taskCount = Task::where('assigned_by', $user->id)->count();
+        
+        if ($user->role === 'manager') {
+            $taskCount = Task::count();
             $employeeCount = User::where('role', 'employee')->count();
-            $tasks = Task::where('assigned_by', $user->id)
-                        ->with('assignee')
-                        ->latest()
-                        ->take(5)
-                        ->get();
+            $tasks = Task::with('assignee')
+                ->orderBy('created_at', 'desc')
+                ->take(5)
+                ->get();
+            
+            // Get unread notifications for task updates and comments
+            $notifications = $user->unreadNotifications()
+                ->whereIn('type', [
+                    'App\Notifications\TaskStatusUpdated',
+                    'App\Notifications\TaskCommentAdded'
+                ])
+                ->orderBy('created_at', 'desc')
+                ->get();
 
-            return view('dashboard.manager', compact('taskCount', 'employeeCount', 'tasks'));
+            return view('dashboard.manager', compact('taskCount', 'employeeCount', 'tasks', 'notifications'));
         } else {
-            $assignedTasks = Task::where('assigned_to', $user->id)->get();
-            $completed = $assignedTasks->where('status', 'completed')->count();
-            $pending = $assignedTasks->where('status', 'pending')->count();
+            $tasks = Task::where('assigned_to', $user->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+            
+            // Get unread notifications for task updates and comments
+            $notifications = $user->unreadNotifications()
+                ->whereIn('type', [
+                    'App\Notifications\TaskStatusUpdated',
+                    'App\Notifications\TaskCommentAdded'
+                ])
+                ->orderBy('created_at', 'desc')
+                ->get();
 
-            return view('dashboard.employee', compact('assignedTasks', 'completed', 'pending'));
+            return view('dashboard.employee', compact('tasks', 'notifications'));
         }
     }
 }

@@ -7,6 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class TaskUpdate extends Model
 {
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'task_id',
+        'user_id',
+        'update_text',
+    ];
+
+    /**
      * Get the task that this update belongs to.
      */
     public function task()

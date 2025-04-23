@@ -100,18 +100,25 @@ class TaskController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'due_date' => 'nullable|date',
-            'assigned_to' => 'required|exists:users,id',
-            'status' => 'required|in:pending,completed',
-            'progress_note' => 'nullable|string',
+            'assignee_id' => 'required|exists:users,id',
+            'status' => 'required|in:pending,in_progress,completed',
+            'priority' => 'required|in:low,medium,high',
         ]);
 
         if (Auth::user()->role === 'employee') {
             $task->update([
                 'status' => $validated['status'],
-                'progress_note' => $validated['progress_note'],
+                'progress_note' => $validated['progress_note'] ?? null,
             ]);
         } else {
-            $task->update($validated);
+            $task->update([
+                'title' => $validated['title'],
+                'description' => $validated['description'],
+                'due_date' => $validated['due_date'],
+                'assigned_to' => $validated['assignee_id'],
+                'status' => $validated['status'],
+                'priority' => $validated['priority'],
+            ]);
         }
 
         return redirect()->route('tasks.index')->with('success', 'Task updated successfully.');

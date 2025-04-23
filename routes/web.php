@@ -34,13 +34,18 @@ Route::middleware(['auth'])->group(function () {
 
 // Manager-only task routes
 Route::middleware(['auth', 'role:manager'])->group(function () {
-    Route::resource('tasks', TaskController::class);
+    Route::resource('tasks', TaskController::class)->except(['show']);
+});
+
+// Shared task routes (accessible by both managers and employees)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
+    Route::post('/tasks/{task}/updates', [TaskUpdateController::class, 'store'])->name('task.update');
 });
 
 // Employee-only routes
 Route::middleware(['auth', 'role:employee'])->group(function () {
-    Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
-    Route::post('/tasks/{task}/updates', [TaskUpdateController::class, 'store'])->name('task.update');
+    // Add any employee-specific routes here
 });
 
 // Comment routes (added for comment handling)
@@ -51,3 +56,8 @@ require __DIR__.'/auth.php';
 
 // Mark notifications as read route
 Route::post('/notifications/{notificationId}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+
+// Notifications routes
+Route::middleware(['auth'])->group(function () {
+    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+});

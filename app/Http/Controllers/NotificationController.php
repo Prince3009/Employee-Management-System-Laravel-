@@ -17,4 +17,14 @@ class NotificationController extends Controller
 
         return redirect()->back();
     }
+
+    public function markAllAsRead(Request $request)
+    {
+        Auth::user()->unreadNotifications->markAsRead();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'All notifications marked as read'
+        ]);
+    }
 }
