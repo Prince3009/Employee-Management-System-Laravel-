@@ -20,29 +20,30 @@ class TaskController extends Controller
     // Store a newly created task
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
+        $validated = $request->validate([
+            'title' => 'required|max:255',
+            'description' => 'required',
             'assigned_to' => 'required|exists:users,id',
-            'description' => 'nullable|string',
-            'due_date' => 'nullable|date',
+            'due_date' => 'required|date',
+            'priority' => 'required|in:low,medium,high',
+            'status' => 'required|in:pending,in_progress,completed'
         ]);
 
         $task = Task::create([
-            'title' => $request->input('title'),
-            'assigned_to' => $request->input('assigned_to'),
-            'assigned_by' => Auth::id(),
-            'description' => $request->input('description'),
-            'due_date' => $request->input('due_date'),
-            'status' => 'pending', // Add default status
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'assigned_to' => $validated['assigned_to'],
+            'assigned_by' => auth()->id(),
+            'due_date' => $validated['due_date'],
+            'priority' => $validated['priority'],
+            'status' => $validated['status']
         ]);
 
-        // Load the relationship and send notification
-        $assignedUser = User::find($request->input('assigned_to'));
-        if ($assignedUser) {
-            $assignedUser->notify(new TaskAssigned($task));
-        }
+        // Send notification to the assigned employee
+        $task->assignee->notify(new \App\Notifications\TaskAssigned($task));
 
-        return redirect()->route('tasks.index')->with('success', 'Task created and assigned successfully.');
+        return redirect()->route('tasks.index')
+            ->with('success', 'Task created successfully.');
     }
 
     // Show list of tasks (for both managers and employees)

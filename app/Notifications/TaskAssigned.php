@@ -2,11 +2,13 @@
 
 namespace App\Notifications;
 
-use App\Models\Task;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Models\Task;
 
-class TaskAssigned extends Notification
+class TaskAssigned extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -38,8 +40,9 @@ class TaskAssigned extends Notification
     {
         return [
             'task_id' => $this->task->id,
-            'title' => $this->task->title,
-            'message' => "You have been assigned a new task: " . $this->task->title,
+            'task_title' => $this->task->title,
+            'user_name' => auth()->user()->name,
+            'message' => 'A new task has been assigned to you'
         ];
     }
 }
